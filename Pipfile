@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+streamlit = "*"
+joblib = "*"
+wordcloud = "*"
+spacy = "*"
+matplotlib = "*"
+en-core-web-sm = {file = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0/en_core_web_sm-3.0.0.tar.gz"}
+sklearn = "*"
+scikit-learn = "*"
+bs4 = "*"
+gensim = "==3.8.1"
+python-levenshtein = "*"
+scipy = "*"
+sumy = "*"
+summarization = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

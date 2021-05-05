@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  app:
+    image: newsclassapp
+    ports:
+      - "172.17.0.2:8501:8080"
+
+  worker:
+    build: app
+    image: newsclassapp
+    deploy:
+      replicas: 1
