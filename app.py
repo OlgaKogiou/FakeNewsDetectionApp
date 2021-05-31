@@ -23,6 +23,7 @@ features such as Lemma, Part of speech tags and Token (for each word).
 - For NER checker: we use spacy's display to make all entities visual.
 """
 
+# libraries import
 from gensim.summarization import summarize
 import streamlit as st
 import joblib
@@ -82,10 +83,11 @@ def prediction(news_text):
     # labels of prediction
     prediction_labels = {'Fake': '1', 'Real': '0'}
     if st.button("Classify"):
-
+        # Classification action
         st.text("Original Text::\n{}".format(news_text))
+        # use of the pretrained model
         vect_text = news_cv.transform([news_text]).toarray()
-
+        # enery classifier has its own model for prediction
         if model_choice == 'Random Forest':
             predictor = load_prediction_models("models/RandomForest.pickle")
             prediction = predictor.predict(vect_text)
@@ -95,7 +97,8 @@ def prediction(news_text):
         elif model_choice == 'Support Vector Machine':
             predictor = load_prediction_models("models/SupportVectorMachine.pickle")
             prediction = predictor.predict(vect_text)
-        final_result = get_key(prediction, prediction_labels)
+            # dictionary that matches label(Real Fake) to the value(1,0)
+        final_result = get_key(prediction, prediction_labels) 
         st.success("News Categorized as:: {}".format(final_result))
 
 
@@ -105,7 +108,7 @@ def Tabulize(raw_text):
     c_tokens = [token.text for token in docx]
     c_lemma = [token.lemma_ for token in docx]
     c_pos = [token.pos_ for token in docx]
-
+    # Creation of a pandas dataframe to print to user
     new_df = pd.DataFrame(zip(c_tokens, c_lemma, c_pos), columns=['Tokens', 'Lemma', 'POS'])
     st.dataframe(new_df)
 
@@ -124,11 +127,12 @@ def wordcloud(raw_text):
 def NLP(raw_text):
     st.info("Natural Language Processing of Text")
     nlp_task = ["Tokenization", "Lemmatization", "POS Tags"]
+    # user selection
     task_choice = st.selectbox("Choose NLP Task", nlp_task)
-
+    # Button action
     if st.button("Tabulize"):
         Tabulize(raw_text)
-
+    # Check box
     if st.checkbox("WordCloud"):
         wordcloud(raw_text)
 
@@ -168,23 +172,26 @@ def analyze_text(text):
 def Summarize(raw_text):
     st.subheader("Summarize Document")
     summarizer_type = st.selectbox("Summarizer Type", ["Gensim", "Sumy Lex Rank"])
+    # summarization function
     if st.button("Summarize"):
         if summarizer_type == "Gensim":
             summary_result = summarize(raw_text)
         elif summarizer_type == "Sumy Lex Rank":
             summary_result = sumy_summarizer(raw_text)
-
+        # print result to user
         st.write(summary_result)
 
 
 def main():
     st.title("News Classifier")
+    # html code for front page markdown
     html_temp = """
     <div style="background-color:blue;padding:10px">
     <h1 style="color:white;text-align:center;">Fake News Detector </h1>
     </div>
     """
     st.markdown(html_temp, unsafe_allow_html=True)
+    # the two modes
     text_choices = ["Paste text", "URL"]
     text_choice = st.selectbox("Select Choice", text_choices)
     news_text = ''
@@ -192,14 +199,16 @@ def main():
         news_text = st.text_area("Enter News Here", "Type Here")
     elif text_choice == "URL":
         raw_url = st.text_input("Enter URL Here", "Type here")
+        # error catching for url paste
         if raw_url != "Type here":
             if raw_url == "" or raw_url == '"':
                 st.write("Waiting...")
             else:
                 news_text = get_text(raw_url)
+    # main modes for user
     activity = ['Prediction', 'NLP', 'Summarize', 'NER Checker']
     choice = st.sidebar.selectbox("Select Activity", activity)
-
+    # function calls
     if choice == 'Prediction':
         prediction(news_text)
     elif choice == 'NLP':
@@ -208,9 +217,9 @@ def main():
         Summarize(news_text)
     elif choice == 'NER Checker':
         NER_checker(news_text)
-
+    
     st.sidebar.subheader("About")
 
-
+# call of main
 if __name__ == '__main__':
     main()
